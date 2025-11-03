@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Checkpoints / large artifacts
+checkpoints/
+*.pt
+*.pth
+*.log
+*.zip
+
+# Weights & Biases runs
+wandb/
+
+# Datasets (ignore entire data/)
+data/
+
+# BUT allow report-ready figures inside data/figs
+!data/figs/**
