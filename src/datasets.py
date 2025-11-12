@@ -8,6 +8,82 @@ from typing import Tuple, Literal, Dict
 import math
 import numpy as np
 
+# def _unwrap_base_and_indices(ds):
+#     """
+#     Unwrap possibly nested torch.utils.data.Subset(...) objects to the
+#     base dataset and produce absolute indices into the base dataset.
+#     """
+#     idx = None
+#     while isinstance(ds, Subset):
+#         idx = ds.indices if idx is None else [ds.indices[i] for i in range(len(idx))]
+#         ds = ds.dataset
+#     if idx is None:
+#         idx = list(range(len(ds)))
+#     return ds, idx
+
+# def _labels_from_dataset(base_ds):
+#     """
+#     Return a list of integer labels for the *base* dataset (not a Subset).
+#     Works for torchvision.datasets.ImageFolder and CIFAR10/100.
+#     """
+#     # ImageFolder: prefer .targets if present, else derive from .samples
+#     if hasattr(base_ds, "targets") and isinstance(base_ds.targets, list):
+#         return base_ds.targets
+#     if hasattr(base_ds, "samples") and isinstance(base_ds.samples, list):
+#         return [y for (_, y) in base_ds.samples]
+
+#     # CIFAR-like datasets: have .targets
+#     if hasattr(base_ds, "targets") and isinstance(base_ds.targets, list):
+#         return base_ds.targets
+
+#     # Fallback: try __getitem__ (slow, but generic)
+#     return [base_ds[i][1] for i in range(len(base_ds))]
+
+# def _class_names_from_dataset(base_ds):
+#     """
+#     Return a list mapping class index -> class name.
+#     """
+#     if hasattr(base_ds, "classes") and isinstance(base_ds.classes, list):
+#         return list(base_ds.classes)
+#     if hasattr(base_ds, "class_to_idx") and isinstance(base_ds.class_to_idx, dict):
+#         inv = {v: k for k, v in base_ds.class_to_idx.items()}
+#         return [inv[i] for i in range(len(inv))]
+#     # CIFAR10/100 provide .classes as well
+#     if hasattr(base_ds, "classes"):
+#         return list(base_ds.classes)
+#     # Fallback: numeric class names
+#     num_classes = max(_labels_from_dataset(base_ds)) + 1
+#     return [str(i) for i in range(num_classes)]
+
+# def class_counts_from_split(ds):
+#     """
+#     Given a dataset or Subset (e.g., loader.dataset), return an Ordered dict:
+#         {class_name: count, ...}
+#     """
+#     base, abs_indices = _unwrap_base_and_indices(ds)
+#     all_labels = _labels_from_dataset(base)
+#     names = _class_names_from_dataset(base)
+
+#     ctr = Counter(all_labels[i] for i in abs_indices)
+#     # Ensure zero-count classes still appear
+#     return {names[k]: ctr.get(k, 0) for k in range(len(names))}
+
+# def print_split_counts(loaders_dict):
+#     """
+#     Pretty-print counts for {"train": ..., "val": ..., "test": ...}
+#     where each value is a DataLoader.
+#     """
+#     for split in ["train", "val", "test"]:
+#         if split not in loaders_dict: 
+#             continue
+#         ds = loaders_dict[split].dataset
+#         counts = class_counts_from_split(ds)
+#         total = sum(counts.values())
+#         print(f"\n==== {split.upper()} ({total} images) ====")
+#         for cls, n in counts.items():
+#             print(f"{cls}: {n}")
+
+
 # Standard ImageNet mean/std used by both ResNet and ViT pretrained weights
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD  = [0.229, 0.224, 0.225]
@@ -49,6 +125,8 @@ def build_train_transforms_imagenet():
         transforms.ToTensor(),
         transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD),
     ])
+
+
 
 
 def build_eval_transforms():
@@ -334,3 +412,4 @@ def get_dataloaders(
         "test": test_loader,
         "num_classes": num_classes,
     }
+

@@ -81,7 +81,9 @@ def train_one_epoch(
     Returns (avg_train_loss, avg_train_acc_percent)
     """
     model.train()
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss(label_smoothing=0.1)
+
 
     total_loss = 0.0
     total_acc = 0.0

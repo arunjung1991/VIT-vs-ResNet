@@ -23,11 +23,12 @@ WARMUP_STEPS=500        # warmup steps for cosine schedule
 FRACTIONS=(0.01 0.1 1.0)
 
 # Datasets to try
-DATASETS=("cifar10" "imagenet_subset")
-# DATASETS=("imagenet_subset")
+# DATASETS=("cifar10" "imagenet_subset")
+DATASETS=("imagenet_subset")
 
 # Models to try
-MODELS=("resnet152" "vit_b16")
+# MODELS=("resnet152" "vit_b16")
+MODELS=("vit_b16")
 
 for dataset in "${DATASETS[@]}"; do
   for model in "${MODELS[@]}"; do
@@ -63,3 +64,4 @@ for dataset in "${DATASETS[@]}"; do
     done
   done
 done
+
